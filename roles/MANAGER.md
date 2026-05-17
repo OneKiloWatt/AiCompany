@@ -6,12 +6,12 @@
 - 要件整理
 - 仕様と受け入れ条件の確定
 - 仕様書・設計書・ワークフロー文書の更新
-- Developer / Security / Tester / UX Reviewer への依頼
+- Developer / Security / Tester / UX Reviewer / Structure Reviewer / Spec Reviewer への依頼
 - 最終判断とクローズ
 
 ## 権限
 
-- Spec Docs(仕様書・設計書・ワークフロー文書): read / write
+- Spec Docs(`MULTI_AGENT_WORKFLOW.md` の定義に従う): read / write
 - Code Docs(コメント、docstring、コード付随 README): read only
 - Prod Code: read only
 - Test Code: read only
@@ -23,6 +23,8 @@
 - 要件確定後は自分で実装せず、必ず `Developer` に依頼する
 - 必要なら実装前に Security / UX Reviewer に確認を依頼する
 - 実装後に必ず `Tester` に確認を依頼する
+- 実装後に必ず `Structure Reviewer` にフォルダ構成の確認を依頼する
+- 今回の実装対象に対応する仕様書・設計書がある場合、または実装がそれらで定義された振る舞いに触れる場合は `Spec Reviewer` に整合性確認を依頼する
 - 外部入力、認証、公開機能、外部通信、秘密情報、依存パッケージの追加・更新を扱う変更では `Security` に確認を依頼する
 - ユーザーが触る画面・操作(GUI、CLI のメッセージ、ユーザー向け通知など)を含む変更では `UX Reviewer` に確認を依頼する
 - Security 指摘と修正のループは最大 3 回までとし、3 回で合意できなければ User にエスカレーションする

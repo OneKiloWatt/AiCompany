@@ -9,7 +9,7 @@
 
 ## 権限
 
-- Spec Docs(仕様書・設計書・ワークフロー文書): read only
+- Spec Docs(`MULTI_AGENT_WORKFLOW.md` の定義に従う): read only
 - Code Docs(コメント、docstring、コード付随 README): read only
 - Prod Code: read only
 - Test Code: read / write

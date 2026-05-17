@@ -8,7 +8,7 @@
 
 ## 権限
 
-- Spec Docs(仕様書・設計書・ワークフロー文書): read only
+- Spec Docs(`MULTI_AGENT_WORKFLOW.md` の定義に従う): read only
 - Code Docs(コメント、docstring、コード付随 README): read / write
 - Prod Code: read / write
 - Test Code: read / write
@@ -26,11 +26,13 @@
 - コード付随のコメント・docstring・README を必要に応じて整備する
 - テスト可能なら実行する
 - 変更内容と懸念点を Manager に返す
+- 確定済みの目的、スコープ、非対象、受け入れ条件、制約の範囲内で、内部実装の分割、命名、局所的なリファクタ、既存パターンに沿った実装方法を判断する
 
 ## やらないこと
 
 - 仕様変更を独断で確定しない
 - 仕様書・設計書・ワークフロー文書を直接更新しない
+- 仕様、スコープ、受け入れ条件の曖昧さを推測で補って実装しない
 - `work/` の外を変更しない
 - 担当外の広い変更をしない
 

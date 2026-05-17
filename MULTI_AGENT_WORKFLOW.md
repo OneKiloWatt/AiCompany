@@ -2,10 +2,47 @@
 
 ## 目的
 
-このドキュメントは、複数エージェントで開発するときの共通ルールを定義する。
+このドキュメントは、複数エージェントで開発するときの全体原則、権限境界、工程ルーターを定義する。
 
-役割ごとの詳細は次を参照する。
+詳細な作業手順は `skills/` 配下の工程別 skill を参照する。
+役割ごとの責務はプロジェクトルートの `roles/` 配下を参照する。
 
+## 構成パターン
+
+案件に応じて2つの構成を使い分ける。
+
+**通常構成（Claude Code のみ）**:
+```
+User → Manager (Claude Code) → Developer / Security / Tester / ...
+```
+
+**Supervisor あり構成（Codex を使う場合）**:
+```
+User → Supervisor (Claude Code) → Manager (Codex) → Developer / Security / Tester / ...
+```
+
+Supervisor を導入する場合、Manager 以下は構成の変更不要。
+Codex の起動は Supervisor が担い、Manager から Codex をさらに起動しない（スタック防止）。
+詳細は `roles/SUPERVISOR.md` を参照する。
+
+## 工程ルーター
+
+依頼内容に応じて、Manager（または Supervisor）は次の工程 skill を使い分ける。
+
+| 工程 | Skill | 使う場面 | 次の工程 |
+| --- | --- | --- | --- |
+| 調査 | `skills/work-investigate/` | 事実、影響範囲、関係箇所、不明点を把握する | 相談 / 設計 / 終了 |
+| 相談 | `skills/work-consult/` | ユーザー判断が必要な仕様、方針、優先度を決める | 調査 / 設計 / 実装 / 終了 |
+| 設計 | `skills/work-design/` | 実装前に目的、スコープ、非対象、受け入れ条件、制約を確定する | 相談 / 実装 |
+| 実装 | `skills/work-implement/` | Developer への実装依頼から検証、レビュー、最終報告まで進める | 設計 / 相談 / 終了 |
+
+相談から実装へ直接進めるのは、目的、スコープ、非対象、受け入れ条件、制約がすでに揃っている場合だけとする。
+
+## 役割
+
+役割の一次情報はプロジェクトルートの次のファイルに置く。
+
+- `roles/SUPERVISOR.md`（Codex 構成時のみ）
 - `roles/MANAGER.md`
 - `roles/DEVELOPER.md`
 - `roles/SECURITY.md`
@@ -14,24 +51,27 @@
 - `roles/STRUCTURE_REVIEWER.md`
 - `roles/SPEC_REVIEWER.md`
 
+`skills/` は工程の進め方を定義し、`roles/` は各担当の責務と権限を定義する。
+同じ責務や権限を skill 側に重複して定義しない。
+
 ## 基本方針
 
-- ユーザーは `Manager` と仕様を固める
-- 仕様が固まるまで `Developer` は実装しない
-- 要件確定後、`Manager` は自分で実装せず `Developer` を起動する
-- 実装コードを変更できるのは `Developer` のみ
-- 仕様書・設計書・ワークフロー文書を更新できるのは `Manager` のみ
-- コードに付随するドキュメント(コメント、docstring、コード配下の README など)は `Developer` が更新できる
-- テストコード・フィクスチャ・スナップショットは `Developer` と `Tester` が更新できる
-- `Security`・`UX Reviewer`・`Structure Reviewer` は原則 read-only で確認と報告を行う
-- 完了前に `Tester` の確認を必須とする
+- ユーザーとの窓口と最終判断は `Manager` が担当する。
+- 仕様が固まるまで `Developer` は実装しない。
+- 要件確定後、`Manager` は自分で実装せず `Developer` を起動する。
+- 実装コードを変更できるのは `Developer` のみとする。
+- 仕様書、設計書、ワークフロー文書を更新できるのは `Manager` のみとする。
+- コードに付随するドキュメントは `Developer` が更新できる。
+- テストコード、フィクスチャ、スナップショットは `Developer` と `Tester` が更新できる。
+- `Security`、`UX Reviewer`、`Structure Reviewer`、`Spec Reviewer` は原則 read-only で確認と報告を行う。
+- 完了前に `Tester` の確認を必須とする。
 
 ## 成果物の配置ルール
 
-- `Developer` が作成・変更する実装コードはすべて `work/` 配下に置く
-- `Developer` は `work/` の外を変更しない(ワークフロー文書と役割定義を保護するため)
-- `work/` 内のフォルダ構成は案件に応じて `Developer` が整える(言語や構成に応じて柔軟に決めてよい)
-- ワークフロー文書(`MULTI_AGENT_WORKFLOW.md`)と役割定義(`roles/`)は `work/` の外に置き、`Manager` のみが更新する
+- `Developer` が作成、変更する実装コードはすべて `work/` 配下に置く。
+- `Developer` は `work/` の外を変更しない。
+- `work/` 内のフォルダ構成は案件に応じて `Developer` が整える。
+- ワークフロー文書と役割定義は `work/` の外に置き、`Manager` のみが更新する。
 
 ## 権限マトリクス
 
@@ -47,98 +87,60 @@
 
 定義:
 
-- **Spec Docs**: 仕様書、設計書、ワークフロー文書(本ファイルおよび `roles/` 配下)
-- **Code Docs**: コード内コメント、docstring、コードに付随する README など、コード成果物に紐づくドキュメント
-- **Prod Code**: 製品として動作するアプリケーション・ライブラリのコード
+- **Spec Docs**: 仕様書、設計書、ワークフロー文書、本ファイル、`roles/` 配下、`skills/` 配下
+- **Code Docs**: コード内コメント、docstring、コードに付随する README など
+- **Prod Code**: 製品として動作するアプリケーション、ライブラリのコード
 - **Test Code**: 自動テスト、フィクスチャ、スナップショット、テスト用ユーティリティ
-
-## 進め方
-
-1. User -> Manager
-仕様、制約、受け入れ条件を固める。
-
-2. Manager -> Security / UX Reviewer / Developer
-実装前にそれぞれの担当者に対して、それぞれの観点で設計レビューを依頼する。
-UX Reviewer はユーザーが触る画面・操作を含む案件でのみ起動する。
-
-3. Security / UX Reviewer -> Manager
-各担当からのフィードバックを確認し、設計書を修正する。
-判断がつかないものは User に確認する。
-修正後は再度 2 に戻る。
-問題がなければ、次に進む。
-
-4. Manager -> Developer
-実装依頼を出す。スコープと完了条件を明記する。
-
-5. Developer -> Manager
-実装結果、影響範囲、未解決事項を返す。
-
-6. Manager -> Tester / Security / UX Reviewer / Structure Reviewer / Spec Reviewer
-テストとレビューを依頼する。
-UX Reviewer はユーザーが触る画面・操作を含む案件でのみ起動する。
-Structure Reviewer はすべての案件で起動する。
-Spec Reviewer は `work/` 配下に仕様書・設計書が存在するすべての案件で起動する。
-
-7. Tester / Security / UX Reviewer / Structure Reviewer / Spec Reviewer -> Manager
-テスト結果・レビュー結果を把握。問題があれば次の基準で差し戻す。
-- 実装上の問題（`Tester` / `Structure Reviewer` / `Spec Reviewer` 由来）→ 4 に戻る
-- 設計上の問題（`Security` / `UX Reviewer` 由来）→ 3 に戻る
-Spec Reviewer から乖離の指摘があった場合、Manager は次の分岐で対応する。
-- 「実装バグ」と判断した場合 → Developer に修正依頼し、4 に戻る
-- 「仕様変更が必要」と判断した場合 → User に確認し、承認を得てから Manager がドキュメントを更新する。更新後は Spec Reviewer に再確認を依頼する。User が却下した場合は Developer に実装修正を依頼し、4 に戻る。
-
-8. Manager -> User
-最終結果、残課題、既知の制約を報告する。
-
-## レビューループの収束条件
-
-- Security 指摘・UX Reviewer 指摘と修正のラウンド(手順 3 および手順 7 から 3 への差し戻し)は **同一案件あたり最大 3 回まで**
-- 上限は Security と UX Reviewer それぞれについて独立にカウントする
-- 3 回で合意に至らない場合、`Manager` は User にエスカレーションし、判断を仰ぐ
-- カウントは「設計レビュー」「実装後レビュー」を区別せず、同一案件で発生した該当レビュアー由来の差し戻し回数で数える
-- Tester 由来の差し戻しはこの上限の対象外(再現性のあるテスト失敗があれば修正する)
-
-## 実行方針
-
-- このプロジェクトでは、原則として複数エージェントで作業する
-- `Manager` は要件整理、進行管理、最終判断のみを担当する
-- `Developer` は実装のみを担当する
-- `Tester` は実装後の検証のみを担当する
-- `Security` は必要時の設計レビューと実装レビューを担当する
-- `UX Reviewer` は必要時の設計レビューと実装レビューを担当する
-- `Structure Reviewer` はすべての実装後にフォルダ構成・ファイル配置のレビューを担当する
-- `Spec Reviewer` は仕様書・設計書が存在する案件の実装後に、仕様と実装の整合性レビューを担当する
 
 ## エージェント起動ルール
 
-- ユーザーから実装依頼を受けたら、`Manager` は先に要件を整理する
-- 要件確定後、`Manager` は必ず `Developer` エージェントを起動して実装を依頼する
-- 実装完了後、`Manager` は必ず `Tester` エージェントを起動して確認を依頼する
-- 外部入力、認証、公開機能、外部通信、秘密情報、依存パッケージの追加・更新を扱う変更では、`Manager` は `Security` にも確認を依頼する
-- ユーザーが触る画面・操作(GUI、CLI のメッセージ、ユーザー向け通知など)を含む変更では、`Manager` は `UX Reviewer` にも確認を依頼する
-- 実装完了後は必ず `Structure Reviewer` にフォルダ構成の確認を依頼する
-- `work/` 配下に仕様書・設計書が存在する案件では、実装完了後に必ず `Spec Reviewer` に整合性確認を依頼する
-- 例外的に単一エージェントで進める場合は、その理由をユーザーに明示する
-
-## 禁止事項
-
-- `Manager` は実装コードを変更しない
-- `Developer` は仕様書・設計書・ワークフロー文書を変更しない
-- `Developer` は `work/` の外のファイルを変更しない
-- 要件確定後に `Developer` を起動せず、自ら実装を開始しない
-- `Tester` の確認なしに完了扱いにしない
-- 例外条件が明記されていない限り、単一エージェントで全工程を兼務しない
-- `Developer` と評価系ロール（`Tester` / `Spec Reviewer` / `Security` / `UX Reviewer` / `Structure Reviewer`）を同一セッションで兼務しない・共有コンテキストを持たせない（自己評価バイアスを防ぐため）
+- Manager は必要な工程に応じて `skills/` を選ぶ。
+- 関係エージェントへ渡す文脈は、原則として `目的 / 対象 / 制約 / 依頼内容 / 期待出力` に絞る。
+- 実装依頼では、Manager は必ず `Developer` を起動する。
+- 実装完了後は、Manager は必ず `Tester` と `Structure Reviewer` を起動する。
+- 外部入力、認証、公開機能、外部通信、秘密情報、依存パッケージの追加・更新を扱う変更では `Security` を起動する。
+- ユーザーが触る画面、操作、CLI 文言、通知を含む変更では `UX Reviewer` を起動する。
+- 今回の実装対象に対応する仕様書、設計書が `work/` 配下に存在する場合、または実装がそれらで定義された振る舞いに触れる場合は `Spec Reviewer` を起動する。
+- 例外的に単一エージェントで進める場合は、その理由をユーザーに明示する。
 
 ## 初回運用ルール
 
-- 最初は `Manager 1 / Developer 1 / Security 1 / Tester 1` で始める
-- UI を持つ案件では `UX Reviewer 1` を追加する
-- `Developer` の追加エージェントは、担当ファイルを明確に分けられるときだけ使う
-- 同じファイルを複数の実装エージェントが触らない
-- 仕様不明、テスト不能、重大なセキュリティ懸念、重大な UX 懸念が出たら `Manager` に戻す
+- 最初は `Manager 1 / Developer 1 / Security 1 / Tester 1` で始める。
+- UI を持つ案件では `UX Reviewer 1` を追加する。
+- Developer の追加エージェントは、担当ファイルやモジュールを明確に分けられるときだけ使う。
+- 同じファイルを複数の Developer が触らない。
+
+## 停止して Manager 判断へ戻す条件
+
+- 仕様不明。
+- テスト不能。
+- 設計矛盾がある。
+- 重大なセキュリティ懸念がある。
+- 重大な UX 懸念がある。
+- スコープや受け入れ条件の根本変更が必要。
+
+## 禁止事項
+
+- `Manager` は実装コードを直接変更しない。
+- `Developer` は仕様書、設計書、ワークフロー文書を直接更新しない。
+- `Developer` は `work/` の外を変更しない。
+- 要件確定後に `Developer` を起動せず、`Manager` が実装を兼務しない。
+- `Tester` の確認なしに完了扱いにしない。
+- 評価系ロールと実装ロールを同一セッションで兼務させない。
+- 同じ権限ルールを複数の skill に重複定義しない。
+
+## レビューループの収束条件
+
+- Security 指摘と UX Reviewer 指摘の差し戻しは、同一案件あたりそれぞれ最大 3 回までとする。
+- 3 回で合意に至らない場合、Manager は User にエスカレーションする。
+- Tester 由来の差し戻しはこの上限の対象外とする。
 
 ## 実装開始条件
+
+プログラムを書く前に、Manager は実装判断に必要な認識が User と Developer の間で揃っていることを確認する。
+目的、スコープ、非対象、受け入れ条件、制約に曖昧さが残る場合は、実装を開始せず、相談または設計工程に戻す。
+ここでいう曖昧さは、目的、スコープ、非対象、受け入れ条件、制約に関わるものを指す。
+Developer は曖昧な点を推測で補って実装してはならない。
 
 次が揃ってから実装を始める。
 
@@ -156,6 +158,6 @@ Spec Reviewer から乖離の指摘があった場合、Manager は次の分岐�
 - 変更内容の要約あり
 - `Tester` によるテスト結果または未実施理由あり
 - セキュリティ指摘があれば解消または受容判断あり
-- UX Reviewer 指摘があれば解消または受容判断あり(UI を持つ案件のみ)
+- UX Reviewer 指摘があれば解消または受容判断あり（ユーザー接点を持つ案件のみ）
 - Structure Reviewer 指摘があれば解消または受容判断あり
-- Spec Reviewer 指摘があれば解消または受容判断あり（`work/` 配下に仕様書・設計書がある案件のみ）
+- Spec Reviewer 指摘があれば解消または受容判断あり（今回の実装対象に対応する仕様書、設計書がある場合のみ）
