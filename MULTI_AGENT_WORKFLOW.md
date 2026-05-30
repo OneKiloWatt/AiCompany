@@ -4,8 +4,8 @@
 
 このドキュメントは、複数エージェントで開発するときの全体原則、権限境界、工程ルーターを定義する。
 
-詳細な作業手順は `skills/` 配下の工程別 skill を参照する。
-役割ごとの責務はプロジェクトルートの `roles/` 配下を参照する。
+詳細な作業手順は `.claude/skills/` 配下の工程別 skill を参照する。
+役割ごとの責務は `.claude/roles/` 配下を参照する。
 
 ## 構成パターン
 
@@ -23,7 +23,7 @@ User → Supervisor (Claude Code) → Manager (Codex) → Developer / Security /
 
 Supervisor を導入する場合、Manager 以下は構成の変更不要。
 Codex の起動は Supervisor が担い、Manager から Codex をさらに起動しない（スタック防止）。
-詳細は `roles/SUPERVISOR.md` を参照する。
+詳細は `.claude/roles/SUPERVISOR.md` を参照する。
 
 ## 工程ルーター
 
@@ -31,27 +31,27 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 
 | 工程 | Skill | 使う場面 | 次の工程 |
 | --- | --- | --- | --- |
-| 調査 | `skills/work-investigate/` | 事実、影響範囲、関係箇所、不明点を把握する | 相談 / 設計 / 終了 |
-| 相談 | `skills/work-consult/` | ユーザー判断が必要な仕様、方針、優先度を決める | 調査 / 設計 / 実装 / 終了 |
-| 設計 | `skills/work-design/` | 実装前に目的、スコープ、非対象、受け入れ条件、制約を確定する | 相談 / 実装 |
-| 実装 | `skills/work-implement/` | Developer への実装依頼から検証、レビュー、最終報告まで進める | 設計 / 相談 / 終了 |
+| 調査 | `.claude/skills/work-investigate/` | 事実、影響範囲、関係箇所、不明点を把握する | 相談 / 設計 / 終了 |
+| 相談 | `.claude/skills/work-consult/` | ユーザー判断が必要な仕様、方針、優先度を決める | 調査 / 設計 / 実装 / 終了 |
+| 設計 | `.claude/skills/work-design/` | 実装前に目的、スコープ、非対象、受け入れ条件、制約を確定する | 相談 / 実装 |
+| 実装 | `.claude/skills/work-implement/` | Developer への実装依頼から検証、レビュー、最終報告まで進める | 設計 / 相談 / 終了 |
 
 相談から実装へ直接進めるのは、目的、スコープ、非対象、受け入れ条件、制約がすでに揃っている場合だけとする。
 
 ## 役割
 
-役割の一次情報はプロジェクトルートの次のファイルに置く。
+役割の一次情報は `.claude/roles/` 配下の次のファイルに置く。
 
-- `roles/SUPERVISOR.md`（Codex 構成時のみ）
-- `roles/MANAGER.md`
-- `roles/DEVELOPER.md`
-- `roles/SECURITY.md`
-- `roles/TESTER.md`
-- `roles/UX_REVIEWER.md`
-- `roles/STRUCTURE_REVIEWER.md`
-- `roles/SPEC_REVIEWER.md`
+- `.claude/roles/SUPERVISOR.md`（Codex 構成時のみ）
+- `.claude/roles/MANAGER.md`
+- `.claude/roles/DEVELOPER.md`
+- `.claude/roles/SECURITY.md`
+- `.claude/roles/TESTER.md`
+- `.claude/roles/UX_REVIEWER.md`
+- `.claude/roles/STRUCTURE_REVIEWER.md`
+- `.claude/roles/SPEC_REVIEWER.md`
 
-`skills/` は工程の進め方を定義し、`roles/` は各担当の責務と権限を定義する。
+`.claude/skills/` は工程の進め方を定義し、`.claude/roles/` は各担当の責務と権限を定義する。
 同じ責務や権限を skill 側に重複して定義しない。
 
 ## 基本方針
@@ -87,14 +87,14 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 
 定義:
 
-- **Spec Docs**: 仕様書、設計書、ワークフロー文書、本ファイル、`roles/` 配下、`skills/` 配下
+- **Spec Docs**: 仕様書、設計書、ワークフロー文書、本ファイル、`.claude/roles/` 配下、`.claude/skills/` 配下
 - **Code Docs**: コード内コメント、docstring、コードに付随する README など
 - **Prod Code**: 製品として動作するアプリケーション、ライブラリのコード
 - **Test Code**: 自動テスト、フィクスチャ、スナップショット、テスト用ユーティリティ
 
 ## エージェント起動ルール
 
-- Manager は必要な工程に応じて `skills/` を選ぶ。
+- Manager は必要な工程に応じて `.claude/skills/` を選ぶ。
 - 関係エージェントへ渡す文脈は、原則として `目的 / 対象 / 制約 / 依頼内容 / 期待出力` に絞る。
 - 実装依頼では、Manager は必ず `Developer` を起動する。
 - 実装完了後は、Manager は必ず `Tester` と `Structure Reviewer` を起動する。
