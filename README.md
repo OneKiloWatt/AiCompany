@@ -17,7 +17,7 @@ Claude Code でマルチエージェント開発を行うためのワークフ�
 ```
 AiCompany/
 ├── .claude/                     # Claude Code 設定・エージェント定義
-│   ├── roles/                   # 各エージェントの役割定義（8 ロール）
+│   ├── agents/                  # 各エージェントの定義（9 エージェント）
 │   │   ├── MANAGER.md
 │   │   ├── DEVELOPER.md
 │   │   ├── TESTER.md
@@ -54,11 +54,12 @@ AiCompany/
 | UX Reviewer | ユーザー接点の品質確認・報告 | 全ファイル読み取り専用 |
 | Structure Reviewer | フォルダ構成・配置の確認・報告 | 全ファイル読み取り専用 |
 | Spec Reviewer | 仕様と実装の整合性確認・報告 | 全ファイル読み取り専用 |
+| Consistency Reviewer | 既存コードとの整合性・影響範囲の確認・報告 | 全ファイル読み取り専用 |
 | Supervisor | 外部エージェント（Codex 等）利用時の Manager 監理 | Manager 相当 |
 
 ## 関連ドキュメント
 
 - [MULTI_AGENT_WORKFLOW.md](./MULTI_AGENT_WORKFLOW.md) — ワークフロー全体の詳細定義
 - [CLAUDE.md](./CLAUDE.md) — Claude Code プロジェクト指示書
-- [.claude/roles/](./.claude/roles/) — 各ロールの詳細定義
+- [.claude/agents/](./.claude/agents/) — 各ロールの詳細定義
 - [.claude/skills/](./.claude/skills/) — 各工程の作業手順

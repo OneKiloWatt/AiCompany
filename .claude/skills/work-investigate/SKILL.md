@@ -15,7 +15,7 @@ description: 調査に使う。Manager が関係箇所、影響範囲、不明�
 - ユーザー依頼または調査したい問い
 - 対象ファイル、モジュール、ログ、文書
 - 制約、期限、触ってはいけない範囲
-- 専門レビューが必要な場合は `.claude/roles/` の該当ロール定義
+- 専門レビューが必要な場合は `.claude/agents/` の該当ロール定義
 
 ## Manager の進め方
 
@@ -35,6 +35,7 @@ description: 調査に使う。Manager が関係箇所、影響範囲、不明�
 - `UX Reviewer`: GUI、CLI 文言、フォーム、通知、ユーザー向けフロー。
 - `Structure Reviewer`: フォルダ構成、ファイル配置、責務境界。
 - `Spec Reviewer`: `work/` 配下の仕様書と実装の整合性。
+- `Consistency Reviewer`: 既存コードのパターン把握や新機能との比較が必要な場合。任意。
 - `Developer`: 実現可能性やコード上の事実確認のみ。read-only / no edits / no implementation。
 
 ## 引き継ぎルール

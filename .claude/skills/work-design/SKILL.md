@@ -42,6 +42,7 @@ Manager は Developer Request を作る前に、実装判断に必要な認識�
 
 - `Security`: 外部入力、認証、公開機能、秘密情報、外部通信、依存関係。
 - `UX Reviewer`: GUI、CLI 文言、通知、フォーム、ユーザー向けフロー。
+- `Consistency Reviewer`: 既存プロジェクトへの機能追加・修正の場合。提案アーキテクチャ・パターンが既存コードと整合するか確認する。
 - `Developer`: 実現可能性、テスト可能性、実装境界、担当ファイル候補。read-only / no edits / no implementation。
 
 ## やること

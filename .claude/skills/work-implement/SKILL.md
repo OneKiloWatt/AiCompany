@@ -39,6 +39,7 @@ description: 実装に使う。計画が揃った後、Manager が Developer へ
 - 外部入力、認証、公開機能、秘密情報、外部通信、依存関係変更では `Security` が必須。
 - GUI、CLI 文言、通知、フォームなどのユーザー接点がある場合は `UX Reviewer` が必須。
 - 今回の実装対象に対応する仕様書、設計書が `work/` 配下に存在する場合、または実装がそれらで定義された振る舞いに触れる場合は `Spec Reviewer` が必須。
+- 既存プロジェクトへの機能追加・修正では `Consistency Reviewer` が必須。
 
 ## 引き継ぎルール
 
@@ -60,6 +61,8 @@ Developer、Tester、各 Reviewer に渡す文脈は、原則として次に絞�
 - 意図した挙動変更による Spec Reviewer の乖離指摘: User に相談し、承認後に Manager がドキュメントを更新し、Spec Reviewer に再確認を依頼する。User が却下した場合は Developer に実装修正を依頼する。
 - Security または UX の計画懸念: 相談または計画に戻す。
 - Security または UX の実装不備: Developer に戻す。
+- Consistency Reviewer のパターン不整合指摘（既存パターンへの統一が推奨）: Developer に戻す。
+- Consistency Reviewer のパターン不整合指摘（新パターン採用の場合）: User に相談し受容判断を得る。
 
 ## やること
 
@@ -92,6 +95,7 @@ Developer、Tester、各 Reviewer に渡す文脈は、原則として次に絞�
 - Security:
 - UX:
 - Spec:
+- Consistency:
 
 ## 指摘対応
 - 指摘:

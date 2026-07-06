@@ -35,6 +35,7 @@ description: 相談に使う。Manager がユーザーと仕様、優先度、�
 - `UX Reviewer`: ユーザー向け挙動、文言、フォーム、操作フローの判断。
 - `Structure Reviewer`: 所有境界や配置判断。
 - `Spec Reviewer`: 仕様と実装の乖離に関する相談のみ。
+- `Consistency Reviewer`: 既存パターンとの整合に関するトレードオフがある場合。任意。
 - `Developer`: 実現可能性や実装コストの見積もりのみ。read-only / no edits / no implementation。
 
 ## 判断境界

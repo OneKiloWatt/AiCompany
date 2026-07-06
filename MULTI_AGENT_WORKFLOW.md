@@ -5,7 +5,7 @@
 このドキュメントは、複数エージェントで開発するときの全体原則、権限境界、工程ルーターを定義する。
 
 詳細な作業手順は `.claude/skills/` 配下の工程別 skill を参照する。
-役割ごとの責務は `.claude/roles/` 配下を参照する。
+役割ごとの責務は `.claude/agents/` 配下を参照する。
 
 ## 構成パターン
 
@@ -23,7 +23,7 @@ User → Supervisor (Claude Code) → Manager (Codex) → Developer / Security /
 
 Supervisor を導入する場合、Manager 以下は構成の変更不要。
 Codex の起動は Supervisor が担い、Manager から Codex をさらに起動しない（スタック防止）。
-詳細は `.claude/roles/SUPERVISOR.md` を参照する。
+詳細は `.claude/agents/SUPERVISOR.md` を参照する。
 
 ## 工程ルーター
 
@@ -40,18 +40,19 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 
 ## 役割
 
-役割の一次情報は `.claude/roles/` 配下の次のファイルに置く。
+役割の一次情報は `.claude/agents/` 配下の次のファイルに置く。
 
-- `.claude/roles/SUPERVISOR.md`（Codex 構成時のみ）
-- `.claude/roles/MANAGER.md`
-- `.claude/roles/DEVELOPER.md`
-- `.claude/roles/SECURITY.md`
-- `.claude/roles/TESTER.md`
-- `.claude/roles/UX_REVIEWER.md`
-- `.claude/roles/STRUCTURE_REVIEWER.md`
-- `.claude/roles/SPEC_REVIEWER.md`
+- `.claude/agents/SUPERVISOR.md`（Codex 構成時のみ）
+- `.claude/agents/MANAGER.md`
+- `.claude/agents/DEVELOPER.md`
+- `.claude/agents/SECURITY.md`
+- `.claude/agents/TESTER.md`
+- `.claude/agents/UX_REVIEWER.md`
+- `.claude/agents/STRUCTURE_REVIEWER.md`
+- `.claude/agents/SPEC_REVIEWER.md`
+- `.claude/agents/CONSISTENCY_REVIEWER.md`
 
-`.claude/skills/` は工程の進め方を定義し、`.claude/roles/` は各担当の責務と権限を定義する。
+`.claude/skills/` は工程の進め方を定義し、`.claude/agents/` は各担当の責務と権限を定義する。
 同じ責務や権限を skill 側に重複して定義しない。
 
 ## 基本方針
@@ -63,7 +64,7 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 - 仕様書、設計書、ワークフロー文書を更新できるのは `Manager` のみとする。
 - コードに付随するドキュメントは `Developer` が更新できる。
 - テストコード、フィクスチャ、スナップショットは `Developer` と `Tester` が更新できる。
-- `Security`、`UX Reviewer`、`Structure Reviewer`、`Spec Reviewer` は原則 read-only で確認と報告を行う。
+- `Security`、`UX Reviewer`、`Structure Reviewer`、`Spec Reviewer`、`Consistency Reviewer` は原則 read-only で確認と報告を行う。
 - 完了前に `Tester` の確認を必須とする。
 
 ## 成果物の配置ルール
@@ -84,10 +85,11 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 | UX Reviewer | Read Only | Read Only | Read Only | Read Only | Optional | No |
 | Structure Reviewer | Read Only | Read Only | Read Only | Read Only | No | No |
 | Spec Reviewer | Read Only | Read Only | Read Only | Read Only | No | No |
+| Consistency Reviewer | Read Only | Read Only | Read Only | Read Only | No | No |
 
 定義:
 
-- **Spec Docs**: 仕様書、設計書、ワークフロー文書、本ファイル、`.claude/roles/` 配下、`.claude/skills/` 配下
+- **Spec Docs**: 仕様書、設計書、ワークフロー文書、本ファイル、`.claude/agents/` 配下、`.claude/skills/` 配下
 - **Code Docs**: コード内コメント、docstring、コードに付随する README など
 - **Prod Code**: 製品として動作するアプリケーション、ライブラリのコード
 - **Test Code**: 自動テスト、フィクスチャ、スナップショット、テスト用ユーティリティ
@@ -101,6 +103,7 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 - 外部入力、認証、公開機能、外部通信、秘密情報、依存パッケージの追加・更新を扱う変更では `Security` を起動する。
 - ユーザーが触る画面、操作、CLI 文言、通知を含む変更では `UX Reviewer` を起動する。
 - 今回の実装対象に対応する仕様書、設計書が `work/` 配下に存在する場合、または実装がそれらで定義された振る舞いに触れる場合は `Spec Reviewer` を起動する。
+- 既存プロジェクトへの機能追加・修正では、設計時と実装時に `Consistency Reviewer` を起動する。相談・調査時は Manager が必要と判断した場合のみ起動する。
 - 例外的に単一エージェントで進める場合は、その理由をユーザーに明示する。
 
 ## 初回運用ルール
@@ -131,7 +134,7 @@ Codex の起動は Supervisor が担い、Manager から Codex をさらに起�
 
 ## レビューループの収束条件
 
-- Security 指摘と UX Reviewer 指摘の差し戻しは、同一案件あたりそれぞれ最大 3 回までとする。
+- Security 指摘と UX Reviewer 指摘と Consistency Reviewer 指摘の差し戻しは、同一案件あたりそれぞれ最大 3 回までとする。
 - 3 回で合意に至らない場合、Manager は User にエスカレーションする。
 - Tester 由来の差し戻しはこの上限の対象外とする。
 
@@ -161,3 +164,4 @@ Developer は曖昧な点を推測で補って実装してはならない。
 - UX Reviewer 指摘があれば解消または受容判断あり（ユーザー接点を持つ案件のみ）
 - Structure Reviewer 指摘があれば解消または受容判断あり
 - Spec Reviewer 指摘があれば解消または受容判断あり（今回の実装対象に対応する仕様書、設計書がある場合のみ）
+- Consistency Reviewer 指摘があれば解消または受容判断あり（既存プロジェクトへの機能追加・修正の場合のみ）

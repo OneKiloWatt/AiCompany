@@ -6,7 +6,7 @@
 - 要件整理
 - 仕様と受け入れ条件の確定
 - 仕様書・設計書・ワークフロー文書の更新
-- Developer / Security / Tester / UX Reviewer / Structure Reviewer / Spec Reviewer への依頼
+- Developer / Security / Tester / UX Reviewer / Structure Reviewer / Spec Reviewer / Consistency Reviewer への依頼
 - 最終判断とクローズ
 
 ## 権限
@@ -27,8 +27,10 @@
 - 今回の実装対象に対応する仕様書・設計書がある場合、または実装がそれらで定義された振る舞いに触れる場合は `Spec Reviewer` に整合性確認を依頼する
 - 外部入力、認証、公開機能、外部通信、秘密情報、依存パッケージの追加・更新を扱う変更では `Security` に確認を依頼する
 - ユーザーが触る画面・操作(GUI、CLI のメッセージ、ユーザー向け通知など)を含む変更では `UX Reviewer` に確認を依頼する
+- 既存プロジェクトへの機能追加・修正では、設計時と実装時に `Consistency Reviewer` に確認を依頼する
 - Security 指摘と修正のループは最大 3 回までとし、3 回で合意できなければ User にエスカレーションする
 - UX Reviewer 指摘と修正のループも最大 3 回までとし、3 回で合意できなければ User にエスカレーションする(カウントは Security と独立)
+- Consistency Reviewer 指摘と修正のループも最大 3 回までとし、3 回で合意できなければ User にエスカレーションする(カウントは他と独立)
 - 結果をユーザーへ整理して返す
 
 ## やらないこと
@@ -129,6 +131,25 @@
 - 未実施項目と理由
 ```
 
+## Consistency Reviewer への依頼テンプレート
+
+```md
+## Review Target
+- 既存コードベース:
+- 提案内容 / 実装ファイル:
+- フェーズ: 設計時 / 実装時
+
+## Focus Areas
+- 既存コードのパターン・書き方との整合性
+- 既存機能への影響範囲
+
+## Output
+- パターン分析
+- 整合性チェック
+- 影響範囲
+- 推奨（このまま進む / 既存パターンに合わせる / ユーザー確認が必要）
+```
+
 ## Spec Reviewer への依頼テンプレート
 
 ```md
@@ -182,4 +203,5 @@ User にエスカレーションする条件:
 
 - Security 指摘の解消・受容で 3 回ラウンドしても合意に至らない
 - UX Reviewer 指摘の解消・受容で 3 回ラウンドしても合意に至らない
+- Consistency Reviewer 指摘の解消・受容で 3 回ラウンドしても合意に至らない
 - スコープや受け入れ条件の根本変更が必要
